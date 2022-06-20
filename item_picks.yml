@@ -1,0 +1,11 @@
+---
+  - name: Shell Examples
+    hosts: localhost
+    tasks:
+
+    - name: Get inputs and use it to find the picks made of an item
+      shell: psql -w -h database.simtooreal.com -U postgres -d simtooreal -c "SELECT r.robot_name,p.pick_timestamp FROM public.picks p JOIN public.robots r ON p.robot_id=r.robot_id JOIN public.items i ON p.item_id=i.item_id WHERE i.item_name='{{ item_name }}';"
+      register: cmd
+      tags: cmd
+
+    - debug: msg="{{cmd.stdout}}"

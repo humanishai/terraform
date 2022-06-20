@@ -1,0 +1,11 @@
+---
+  - name: Shell Examples
+    hosts: localhost
+    tasks:
+
+    - name: Get input and use it to insert an item
+      shell: psql -w -h database.simtooreal.com -U postgres -d simtooreal -c "INSERT INTO public.items values(default,'{{ item_name }}');"
+      register: cmd
+      tags: cmd
+
+    - debug: msg="{{cmd.stdout}}"

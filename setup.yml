@@ -1,0 +1,12 @@
+---
+  - name: Setup Postgres
+    hosts: localhost
+    tasks:
+
+    - name: Run setup script
+      shell:
+         "psql -h database.simtooreal.com -U postgres -f schema.sql"
+      register: setupcmd
+      tags: setupcmd
+
+    - debug: msg="{{setupcmd.stdout}}"

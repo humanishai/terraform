@@ -1,0 +1,11 @@
+---
+  - name: Shell Examples
+    hosts: localhost
+    tasks:
+
+    - name: Get inputs and use it to insert a robot
+      shell: psql -w -h database.simtooreal.com -U postgres -d simtooreal -c "INSERT INTO public.robots values(default,'{{ robot_name }}');"
+      register: cmd
+      tags: cmd
+
+    - debug: msg="{{cmd.stdout}}"

@@ -1,0 +1,76 @@
+#!/bin/bash
+
+# Copyright 2017 Cloud Posse, LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+if [ -f /etc/slack/env ]; then
+  . /etc/slack/env
+fi
+
+set -o pipefail
+
+function debug() {
+  if [ "${DEBUG}" == "true" ]; then
+    echo "DEBUG: $*" >&2
+  fi
+}
+
+if [ -n "${SSH_CLIENT}" ]; then
+  # Invoked as an SSH ForceCommand
+  export SSH_USER="${USER}"
+  export SSH_CLIENT_IP="$(echo "$SSH_CONNECTION" | cut -d' ' -f1)"
+  export SSH_TERM="tty${SSH_TTY##*/}"
+  if [ "${SSH_TERM}" == "tty" ]; then
+    export SSH_TERM="notty"
+  fi
+  export SSH_ORIGINAL_COMMAND="${SSH_ORIGINAL_COMMAND:-shell}"
+  export SLACK_NOTIFICATION_TEMPLATE="${SLACK_NOTIFICATION_TEMPLATE:-/etc/slack/ssh-force-command-notification.json}"
+elif [ "${PAM_TYPE}" == "open_session" ]; then
+  # Invoked as a PAM module
+  export SLACK_NOTIFICATION_TEMPLATE="${SLACK_NOTIFICATION_TEMPLATE:-/etc/slack/pam-${PAM_TYPE}-notification.json}"
+else
+  echo "Unknown invocation" >&2
+  exit 1
+fi
+
+if [ -s "/etc/hostname" ]; then
+  export HOSTNAME=`cat /etc/hostname`
+else
+  export HOSTNAME=`hostname`
+fi
+export SHORT_HOSTNAME="${HOSTNAME%%.*}"
+export SLACK_USERNAME="${SLACK_USERNAME:-${SHORT_HOSTNAME}}"
+export SLACK_TIMEOUT="${SLACK_TIMEOUT:-2}"
+export SLACK_FATAL_ERRORS="${SLACK_FATAL_ERRORS:-true}"
+
+if [ -z "${SLACK_WEBHOOK_URL}" ]; then
+  echo "SLACK_WEBHOOK_URL not defined"
+  exit 1
+fi
+
+# See: https://api.slack.com/docs/messages/builder
+if [ -f "${SLACK_NOTIFICATION_TEMPLATE}" ]; then
+  envsubst < "${SLACK_NOTIFICATION_TEMPLATE}" | \
+    curl --fail --silent --connect-timeout ${SLACK_TIMEOUT} -H 'Content-type: application/json' --data @- "${SLACK_WEBHOOK_URL}" >/dev/null
+
+  exit=$?
+
+  if [ $exit -eq 0 ]; then
+    debug "Slack notification sent"
+    exit $exit
+  elif [ "${SLACK_FATAL_ERRORS}" == "true" ]; then
+    debug "Slack notification failed"
+    exit $exit
+  fi
+fi

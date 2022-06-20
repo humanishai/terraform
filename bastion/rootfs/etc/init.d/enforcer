@@ -1,0 +1,15 @@
+#!/bin/bash
+umask 0066
+
+if [ "${ENFORCER_ENABLED}" == "true" ]; then
+  echo "- Enabling Enforcer"
+  env | grep "^ENFORCER_" > /etc/enforcer
+  echo "session required pam_exec.so stdout quiet /usr/bin/enforcer" > /etc/pam.d/enforcer
+else
+  :>/etc/pam.d/enforcer
+fi
+
+if [ "${ENFORCER_CLEAN_HOME_ENABLED}" == "true" ]; then
+  echo "- Enabling Clean Home"
+  chmod 755 /etc/enforce.d/?.clean-home
+fi
