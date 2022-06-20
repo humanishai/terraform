@@ -259,8 +259,8 @@ To get GPUs make sure you reach out to the SALES TEAM and talk to them LIVE as n
 
 Add this to your .bashrc on a mac or ubuntu
 ```
-alias deusfrontend='result=${PWD##*/} && if [[ $results -eq "backend" ]]; then cd ../frontend && npm install --legacy-peer-deps && REACT_APP_LOCAL_ENVIRONMENT=True REACT_APP_URL_BACKEND=http://localhost:8080 REACT_APP_URL_FRONTEND=http://localhost:3000 npm start; fi'
-alias deusbackend='docker compose down --volumes && docker compose build --no-cache && docker compose up'
+alias humanishfrontend='result=${PWD##*/} && if [[ $results -eq "backend" ]]; then cd ../frontend && npm install --legacy-peer-deps && REACT_APP_LOCAL_ENVIRONMENT=True REACT_APP_URL_BACKEND=http://localhost:8080 REACT_APP_URL_FRONTEND=http://localhost:3000 npm start; fi'
+alias humanishbackend='docker compose down --volumes && docker compose build --no-cache && docker compose up'
 ```
 
 Then run this command for them to take effect
@@ -277,34 +277,34 @@ POSTGRESQL_PASSWORD=magical_password
 POSTGRESQL_HOST=backend-database-1
 REPLICATE_API_TOKEN=<insert token from admin>
 OPENAI_API_KEY=<your OpenAI API key>' > .env
-deusbackend
+humanishbackend
 ```
 
 Now you are ready to run the application
 ```
-deusbackend
+humanishbackend
 ```
 
 In a separate terminal window run the frontend
 ```
-deusfrontend
+humanishfrontend
 ```
 
 Code changes are automatically fast refreshed when you save a python file
 
 To enter the local database in another terminal on your machine
 ```
-psql --host=backend-database-1 --username=postgres --dbname=deus -w
+psql --host=backend-database-1 --username=postgres --dbname=humanish -w
 ```
 
 If you would like to restart the frontend app locally use this command
 ```
-deusbackend
+humanishbackend
 ```
 
 In a separate terminal window run this to restart the frontend locally
 ```
-deusfrontend
+humanishfrontend
 ```
 
 To see log messages related to simtooreal_app run this command
@@ -355,9 +355,9 @@ apt install vim
 vim app.py
 ```
 
-To troubleshoot a task running in ECS say task ea29f8775f8a4028969adb9d03a555c2 on deus-backend:
+To troubleshoot a task running in ECS say task ea29f8775f8a4028969adb9d03a555c2 on humanish-backend:
 
 First update app.py in the task definition json to health_check.py
 ```
-aws ecs execute-command --cluster deus --task ea29f8775f8a4028969adb9d03a555c2 --container deus-backend --interactive --command "bash"
+aws ecs execute-command --cluster humanish --task ea29f8775f8a4028969adb9d03a555c2 --container humanish-backend --interactive --command "bash"
 ```
