@@ -794,7 +794,7 @@ resource "aws_security_group" "humanish_public" {
     protocol    = "tcp"
     from_port   = 22
     to_port     = 22
-    cidr_blocks = ["76.231.26.199/32"]
+    cidr_blocks = ["69.181.183.147/32"]
   }
 
   egress {
