@@ -83,6 +83,7 @@ resource "aws_route53_record" "humanish_mx" {
     "5 ALT2.ASPMX.L.GOOGLE.COM",
     "10 ALT3.ASPMX.L.GOOGLE.COM",
     "10 ALT4.ASPMX.L.GOOGLE.COM",
+    "15 lncks7jelikvghw6eywwoiuaghggwn5sq4tqqxhrp33vunj2ihaq.mx-verification.google.com."
   ]
 
   ttl = 60
@@ -94,7 +95,7 @@ resource "aws_route53_record" "humanish_txt" {
   type    = "TXT"
 
   records = [
-    "google-site-verification=61Exwgsm5YaTH7UBODn-rnEC-ussrNrrLE69yzQqrJ8"
+    "lncks7jelikvghw6eywwoiuaghggwn5sq4tqqxhrp33vunj2ihaq.mx-verification.google.com."
   ]
 
   ttl = 60
