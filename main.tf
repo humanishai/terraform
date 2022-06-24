@@ -239,7 +239,8 @@ EOF
             "arn:aws:ssm:${var.aws_region}:*:parameter/humanish/production/POSTGRESQL_DB",
             "arn:aws:ssm:${var.aws_region}:*:parameter/humanish/production/LISTEN_ON_FRONTEND",
             "arn:aws:ssm:${var.aws_region}:*:parameter/humanish/production/LISTEN_ON",
-            "arn:aws:ssm:${var.aws_region}:*:parameter/humanish/production/SECRET_KEY"
+            "arn:aws:ssm:${var.aws_region}:*:parameter/humanish/production/SECRET_KEY",
+            "arn:aws:ssm:${var.aws_region}:*:parameter/humanish/production/STRIPE_SECRET_KEY"
           ]
         },
         {
@@ -1275,6 +1276,10 @@ resource "aws_ecs_task_definition" "humanish_backend" {
         {
           valueFrom = "arn:aws:ssm:${var.aws_region}:923082272114:parameter/humanish/production/SECRET_KEY",
           name      = "SECRET_KEY"
+        },
+        {
+          valueFrom = "arn:aws:ssm:${var.aws_region}:923082272114:parameter/humanish/production/STRIPE_SECRET_KEY",
+          name      = "STRIPE_SECRET_KEY"
         }
       ],
       mountPoints = [],
@@ -1362,6 +1367,10 @@ resource "aws_ecs_task_definition" "humanish_frontend" {
         {
           valueFrom = "arn:aws:ssm:${var.aws_region}:923082272114:parameter/humanish/production/SECRET_KEY",
           name      = "SECRET_KEY"
+        },
+        {
+          valueFrom = "arn:aws:ssm:${var.aws_region}:923082272114:parameter/humanish/production/STRIPE_SECRET_KEY",
+          name      = "STRIPE_SECRET_KEY"
         }
       ],
       mountPoints = [],
@@ -1871,6 +1880,20 @@ resource "aws_ssm_parameter" "humanish_secret_key" {
   description = "Secret key for flask_praetorian"
   type        = "SecureString"
   value       = var.secret_key
+  overwrite   = "true"
+
+  tags = {
+    Name        = "humanish"
+    environment = "production"
+  }
+}
+
+# ssm parameter group for database endpoint
+resource "aws_ssm_parameter" "humanish_stripe_secret_key" {
+  name        = "/humanish/production/STRIPE_SECRET_KEY"
+  description = "Secret key for Stripe"
+  type        = "SecureString"
+  value       = var.stripe_secret_key
   overwrite   = "true"
 
   tags = {

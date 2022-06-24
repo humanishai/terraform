@@ -8,7 +8,4 @@ terraform.tfstate
 terraform.tfstate.backup
 terraform.tfvars
 
-# Rylan's file for quick tests
-playground.py
-
 __pycache__/

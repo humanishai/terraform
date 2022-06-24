@@ -73,6 +73,13 @@ variable "secret_key" {
   sensitive   = true
 }
 
+# The api token for flask praetorian
+variable "stripe_secret_key" {
+  description = "Stripe secret key"
+  default     = "$$${stripe_secret_key}"
+  sensitive   = true
+}
+
 # The minimum number of containers that should be running
 variable "ecs_autoscale_min_instances" {
   default = "2"
